@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Interactivo del Periodonto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            background-color: #4a148c; /* Morado oscuro */
+            color: #fff; /* Texto blanco */
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+        #periodonto {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .componente {
+            cursor: pointer;
+            border: 2px solid #4a148c; /* Morado oscuro */
+            border-radius: 5px;
+            margin: 5px;
+            padding: 10px 20px;
+            width: 200px;
+            text-align: center;
+            background-color: #fff; /* Blanco */
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sutil sombra */
+        }
+        .componente:hover {
+            background-color: #4a148c; /* Morado oscuro */
+            color: #fff; /* Texto blanco */
+        }
+        #informacion {
+            margin-top: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #informacion h2 {
+            color: #4a148c; /* Morado oscuro */
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        #informacion p {
+            margin: 0 0 10px;
+            font-size: 18px;
+            text-align: center;
+            color: #333; /* Texto oscuro */
+        }
+        #informacion img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sutil sombra */
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 70px;
+            margin-top: 30px;
+        }
+        .subinfo {
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            margin-bottom: 70px;
+        }
+        .subinfo.active {
+            display: block;
+        }
+        .subinfo p {
+            margin: 5px 0;
+            text-align: center;
+        }
+        .ver-imagen {
+            color: #4a148c; /* Morado oscuro */
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+            display: none;
+            margin-bottom: 70px;
+        }
+        .ver-imagen.active {
+            display: block;
+            margin-bottom: 70px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Periodonto</h1>
+</header>
+
+<div id="periodonto">
+    <div id="Encía" class="componente">Encía</div>
+    <div id="LigamentoPeriodontal" class="componente">Ligamento Periodontal</div>
+    <div id="CementoRadicular" class="componente">Cemento Radicular</div>
+    <div id="HuesoAlveolar" class="componente">Hueso Alveolar</div>
+    <div id="Cuestionario" class="componente">Cuestionario</div>
+</div>
+
+<div id="informacion"></div>
+
+<script>
+    // Objeto que contiene la información sobre cada componente del periodonto
+    const informacionComponentes = {
+        Encía: {
+            Función: "Protege y soporta los dientes.",
+            Descripción: "La encía es el tejido blando que cubre los maxilares y rodea el cuello de los dientes.<br>Se divide en: Encía marginal, Encía adherida y Encía interproximal.",
+            "Encía marginal": "La encía marginal o libre se encuentra por encima de la línea gingival.",
+            "Encía adherida": "La encía adherida es la parte que rodea a la pieza dental.",
+            "Encía interproximal": "La encía interproximal está situada entre los dientes y tiene forma triangular.",
+            imagen: "https://www.propdental.es/wp-content/uploads/2013/02/encia.jpg"
+        },
+        LigamentoPeriodontal: {
+            Función: "Fija el diente al hueso.",
+            Descripción: "El ligamento periodontal es una estructura fibrosa que une la raíz del diente con el hueso alveolar.<br>Se compone de diferentes grupos de fibras.",
+            "De la cresta alveolar": "De la cresta alveolar: Se extienden desde el área cervical del diente hacia la cresta alveolar.",
+            "Horizontales": "Horizontales: Se dirigen horizontalmente desde el diente hasta el hueso alveolar.",
+            "Oblicuas": "Oblicuas: Se extienden oblicumente desde el cemento hasta el hueso alveolar.",
+            "Apicales": "Apicales: Van desde el ápice hacia el hueso alveolar.",
+            "Interradiculares": "Interrradiculares: Se encuentran entre las raíces de los dientes multirradiculares.",
+            imagen: "https://uploads-ssl.webflow.com/5ef7fbe8319e9c47aa429c7d/5f45b8de54a3b7dd07b9972e_LIZ%201.png"
+        },
+        CementoRadicular: {
+            Función: "Protege la raíz del diente y ayuda a su fijación.",
+            Descripción: "El cemento radicular es una capa delgada de tejido duro que recubre la raíz del diente.<br>Protege la raíz de los dientes de daños y ayuda a fijar el diente al hueso alveolar.",
+            imagen: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Lower_wisdom_tooth.jpg"
+        },
+        HuesoAlveolar: {
+            Función: "Sostiene los dientes en su lugar.",
+            Descripción: "El hueso alveolar es el hueso que rodea y sostiene las raíces de los dientes.<br>Proporciona un soporte sólido para los dientes y es crucial para mantener su estabilidad.",
+            imagen: "https://bqdentalcenters.es/wp-content/uploads/periodontal-ligamento-825x510.jpg"
+        },
+    };
+
+    // Función para mostrar la información de un componente cuando se hace clic en él
+    function mostrarInformacion(componente) {
+        const info = informacionComponentes[componente];
+        let contenido = `
+            <h2>${componente}</h2>
+            <p><strong>Función:</strong> ${info.Función}</p>
+            <p>${info.Descripción}</p>
+            <img src="${info.imagen}" alt="${componente}">
+            <div class="ver-imagen">Ver imagen</div>
+        `;
+        if (componente === "Encía" || componente === "LigamentoPeriodontal") {
+            contenido += `
+                <div class="subinfo">
+                    <p><strong>Información adicional:</strong></p>
+            `;
+            Object.keys(info).forEach(key => {
+                if (key !== "Función" && key !== "Descripción" && key !== "imagen") {
+                    contenido += `<p>- ${info[key]}</p>`;
+                }
+            });
+            contenido += `
+                </div>
+            `;
+        }
+        document.getElementById("informacion").innerHTML = contenido;
+        document.querySelectorAll(".subinfo").forEach(item => {
+            item.classList.remove("active");
+        });
+        document.querySelectorAll(".ver-imagen").forEach(item => {
+            item.classList.remove("active");
+        });
+    }
+
+    // Agregar eventos de clic a cada componente
+    document.getElementById("Encía").addEventListener("click", () => mostrarInformacion("Encía"));
+    document.getElementById("LigamentoPeriodontal").addEventListener("click", () => mostrarInformacion("LigamentoPeriodontal"));
+    document.getElementById("CementoRadicular").addEventListener("click", () => mostrarInformacion("CementoRadicular"));
+    document.getElementById("HuesoAlveolar").addEventListener("click", () => mostrarInformacion("HuesoAlveolar"));
+
+    // Agregar evento de clic para mostrar información adicional y la imagen
+    document.getElementById("informacion").addEventListener("click", function(e) {
+        if (e.target.classList.contains("ver-imagen")) {
+            const imagen = e.target.previousElementSibling;
+            imagen.classList.toggle("active");
+            e.target.textContent = imagen.classList.contains("active") ? "Ocultar imagen" : "Ver imagen";
+        } else {
+            const subinfo = document.querySelector(".subinfo");
+            subinfo.classList.toggle("active");
+        }
+    });
+</script>
+
+</body>
+</html>
